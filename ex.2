@@ -1,0 +1,156 @@
+class polynom:
+    def __init__(self, coe):
+        self.coe = coe
+        self.pwr = len(self.coe)-1
+    def __add__(self, obj):
+        if (self.pwr>obj.pwr):
+            j=obj.pwr
+            z=self.pwr-obj.pwr
+            x=0
+        else:
+            j=self.pwr
+            z = obj.pwr - self.pwr
+            x=1
+        q=[]
+        for i in range(j+1):
+            q.append(self.coe[i]+obj.coe[i])
+        for i in range(z):
+            if(x==0):
+                q.append(self.coe[j+i+1])
+            else:
+                q.append(obj.coe[j+i+1])
+        w=polynom(q)
+        return(w)
+    def __sub__(self, obj):
+        if (self.pwr>obj.pwr):
+            j=obj.pwr
+            z=self.pwr-obj.pwr
+            x=0
+        else:
+            j=self.pwr
+            z = obj.pwr - self.pwr
+            x=1
+        q=[]
+        for i in range(j+1):
+            q.append(self.coe[i]-obj.coe[i])
+        for i in range(z):
+            if(x==0):
+                q.append(self.coe[j+i+1])
+            else:
+                q.append((-1)*obj.coe[j+i+1])
+        w=polynom(q)
+        return(w)
+    def __mul__(self, obj):
+        q=[]
+        for i in range(self.pwr+obj.pwr+1):
+            q.append(0)
+        for i in range(self.pwr+1):
+            for j in range(obj.pwr+1):
+                q[i+j]=self.coe[i]*obj.coe[j]+q[i+j]
+        w=polynom(q)
+        return(w)
+    def __eq__(self, obj):
+        return(self.pwr==obj.pwr and self.coe==obj.coe)
+    def __ne__(self, obj):
+        return not (self.pwr == obj.pwr and self.coe == obj.coe)
+    def __truediv__(self,obj):
+        q=[]
+        for i in range(self.pwr-obj.pwr+1):
+            q.append(0)#знаменатель
+        if(self.pwr>obj.pwr):
+            p=[]
+            for i in range(self.pwr+1):
+                p.append(self.coe[i])
+            for i in range(self.pwr-obj.pwr+1):
+                #print(self.pwr-obj.pwr-i,self.pwr-i,"a")
+                q[self.pwr-obj.pwr-i]=p[self.pwr-i]/obj.coe[obj.pwr]
+                for j in range(obj.pwr+1):
+                    p[self.pwr-i-j]=p[self.pwr-i-j]-obj.coe[obj.pwr-j]*q[self.pwr-obj.pwr-i]
+            for i in range(self.pwr-obj.pwr):
+                q[i]=q[i]+p[i]
+            w=polynom(q)
+            return(w)
+    def __pow__(self,obj):
+        w=self*self
+        for i in range(obj-2):
+            w=self*w
+        return(w)
+    def derivative(self):
+        q=[]
+        for i in range(self.pwr+1):
+            q.append(self.coe[i])
+        for i in range(self.pwr-1):
+            for j in range(self.pwr-i+1):
+                q[j]=q[j]*j
+            del q[0]
+        w=polynom(q)
+        return(w)
+    def __neg__(self):
+        q=self
+        for i in range(self.pwr+1):
+            q.coe[i]=(-1)*self.coe[i]
+        return(q)
+    def __pos_(self):
+        q=self
+        return(q)
+    def copy(self):
+        q=self
+        return(q)
+    def __len__(self):
+        q=self.pwr+1
+        return(q)
+    def value(self, obj):
+        q=[]
+        for i in range(self.pwr+1):
+            q.append((obj**i)*self.coe[i])
+        w=0
+        for i in range(self.pwr + 1):
+            w=w+q[i]
+        return(w)
+    def __getitem__(self, i):
+        if(i<=self.pwr+1):
+            return(self.coe[i]-1)
+        else:
+            print("no")
+            return(0)
+    def __setitem__(self, i, value):
+        if(i<=self.pwr+1):
+            self.coe[i]=value
+        else:
+            print("no")
+            return(0)
+    def __iter__(self):
+        self.next = 0
+        i=self.next
+        return (self)
+    def __next__(self):
+        i = self.next
+        self.next=self.next+1
+        return (self.coe[i])
+    def printf(self):
+        for i in range(self.pwr+1):
+            if(i==0):
+                print(self.coe[i], end=' ')
+            else:
+                print("+",self.coe[i], "*x^", i, end=' ')
+n=list(map(float,input().split()))
+k=polynom(n)
+m=list(map(float,input().split()))
+q=polynom(m)
+#for i in k:
+    #print(i)
+    #if (i > 14):
+        #break
+#if(n==m):
+ #   w=1
+#else:
+#    w=2
+w=k.copy()
+#k.printf()
+try:
+    w.printf()
+except AttributeError:
+    if (type(w) == float or type(w) == int):
+        print(w)
+    else:
+        print("no")

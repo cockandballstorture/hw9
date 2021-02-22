@@ -168,20 +168,19 @@ class solvr:
         c=(a+b)/2
         return(c)
     def boarders(self):
-        k=max(self.polynom.coe)/self.polynom.coe[self.polynom.pwr]
+        k=max(self.polynom.coe)/abs(self.polynom.coe[self.polynom.pwr])
         return(k)
     def locate_roots(self, a, b,eps=0.001):
-        x=b
+        x=a-1-eps/2
         k=[]
-        w=self.polynom.value(a)
-        while (x<=a):
+        w=self.polynom.value(x)
+        while (x<=b+1+eps/2):
             x=x+eps
             y=self.polynom.value(x)
             if(y*w<=0):
                 w=y
                 k.append(x-eps)
                 k.append(x)
-                print(y)
         return(k)
     def w(self, c):
         if (self.polynom.value(c) > 0):
@@ -199,8 +198,7 @@ class solvr:
         return (r)
     def find_roots(self):
         k=self.boarders()
-        print(k)
-        q=self.locate_roots(k,-k)
+        q=self.locate_roots(-k,k)
         w=[]
         for i in range(int(len(q)/2)):
            w.append(self.find_root(q[2*i],q[2*i+1]))

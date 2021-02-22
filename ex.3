@@ -1,0 +1,228 @@
+class polynom:
+    def __init__(self, coe):
+        self.coe = coe
+        self.pwr = len(self.coe)-1
+    def __add__(self, obj):
+        if (self.pwr>obj.pwr):
+            j=obj.pwr
+            z=self.pwr-obj.pwr
+            x=0
+        else:
+            j=self.pwr
+            z = obj.pwr - self.pwr
+            x=1
+        q=[]
+        for i in range(j+1):
+            q.append(self.coe[i]+obj.coe[i])
+        for i in range(z):
+            if(x==0):
+                q.append(self.coe[j+i+1])
+            else:
+                q.append(obj.coe[j+i+1])
+        w=polynom(q)
+        return(w)
+    def __sub__(self, obj):
+        if (self.pwr>obj.pwr):
+            j=obj.pwr
+            z=self.pwr-obj.pwr
+            x=0
+        else:
+            j=self.pwr
+            z = obj.pwr - self.pwr
+            x=1
+        q=[]
+        for i in range(j+1):
+            q.append(self.coe[i]-obj.coe[i])
+        for i in range(z):
+            if(x==0):
+                q.append(self.coe[j+i+1])
+            else:
+                q.append((-1)*obj.coe[j+i+1])
+        w=polynom(q)
+        return(w)
+    def __mul__(self, obj):
+        q=[]
+        for i in range(self.pwr+obj.pwr+1):
+            q.append(0)
+        for i in range(self.pwr+1):
+            for j in range(obj.pwr+1):
+                q[i+j]=self.coe[i]*obj.coe[j]+q[i+j]
+        w=polynom(q)
+        return(w)
+    def __eq__(self, obj):
+        return(self.pwr==obj.pwr and self.coe==obj.coe)
+    def __ne__(self, obj):
+        return not (self.pwr == obj.pwr and self.coe == obj.coe)
+    def __truediv__(self,obj):
+        q=[]
+        for i in range(self.pwr-obj.pwr+1):
+            q.append(0)#знаменатель
+        if(self.pwr>obj.pwr):
+            p=[]
+            for i in range(self.pwr+1):
+                p.append(self.coe[i])
+            for i in range(self.pwr-obj.pwr+1):
+                #print(self.pwr-obj.pwr-i,self.pwr-i,"a")
+                q[self.pwr-obj.pwr-i]=p[self.pwr-i]/obj.coe[obj.pwr]
+                for j in range(obj.pwr+1):
+                    p[self.pwr-i-j]=p[self.pwr-i-j]-obj.coe[obj.pwr-j]*q[self.pwr-obj.pwr-i]
+            for i in range(self.pwr-obj.pwr):
+                q[i]=q[i]+p[i]
+            w=polynom(q)
+            return(w)
+    def __pow__(self,obj):
+        w=self*self
+        for i in range(obj-2):
+            w=self*w
+        return(w)
+    def derivative(self):
+        q=[]
+        for i in range(self.pwr+1):
+            q.append(self.coe[i])
+        for i in range(self.pwr-1):
+            for j in range(self.pwr-i+1):
+                q[j]=q[j]*j
+            del q[0]
+        w=polynom(q)
+        return(w)
+    def __neg__(self):
+        q=self
+        for i in range(self.pwr+1):
+            q.coe[i]=(-1)*self.coe[i]
+        return(q)
+    def __pos_(self):
+        q=self
+        return(q)
+    def copy(self):
+        q=self
+        return(q)
+    def __len__(self):
+        q=self.pwr+1
+        return(q)
+    def value(self, obj):
+        q=[]
+        for i in range(self.pwr+1):
+            q.append((obj**i)*self.coe[i])
+        w=0
+        for i in range(self.pwr + 1):
+            w=w+q[i]
+        return(w)
+    def __getitem__(self, i):
+        if(i<=self.pwr+1):
+            return(self.coe[i]-1)
+        else:
+            print("no")
+            return(0)
+    def __setitem__(self, i, value):
+        if(i<=self.pwr+1):
+            self.coe[i]=value
+        else:
+            print("no")
+            return(0)
+    def __iter__(self):
+        self.next = 0
+        i=self.next
+        return (self)
+    def __next__(self):
+        i = self.next
+        self.next=self.next+1
+        return (self.coe[i])
+    def printf(self):
+        for i in range(self.pwr+1):
+            if(i==0):
+                print(self.coe[i], end=' ')
+            else:
+                print("+",self.coe[i], "*x^", i, end=' ')
+class solvr:
+    def __init__(self, polynom):
+        self.polynom = polynom
+        self.derivative = polynom.derivative()
+    def locate_roots(self, a, b):
+        if(type(a)==int and type(b)==int):
+            z=[]
+            z.append(a)
+            z.append(b)
+            w=a
+            for i in range(abs(a-b+3)):
+                q=a+i
+                for j in range(abs(a - b + 3)):
+                    q=q/(a+i-j)
+                q=q*(self.polynom.value(a+i))
+                z.append(q)
+                for i in range(abs(a - b + 3)):
+                    w=w+i
+                    if(w>b):
+                        w=a
+                    z.append(w)
+        return(z)
+    def n_roots(self, a, b):
+        n=abs(self.w(a)-self.w(b))
+        return(n)
+    def find_root(self, a, b, eps=0.001):
+        while(abs(b-a)>eps):
+            c=(a+b)/2
+            if(self.polynom.value(a)*self.polynom.value(c)>0):
+                a=c
+            else:
+                b=c
+        c=(a+b)/2
+        return(c)
+    def boarders(self):
+        k=max(self.polynom.coe)/self.polynom.coe[self.polynom.pwr]
+        return(k)
+    def locate_roots(self, a, b,eps=0.001):
+        x=b
+        k=[]
+        w=self.polynom.value(a)
+        while (x<=a):
+            x=x+eps
+            y=self.polynom.value(x)
+            if(y*w<=0):
+                w=y
+                k.append(x-eps)
+                k.append(x)
+                print(y)
+        return(k)
+    def w(self, c):
+        if (self.polynom.value(c) > 0):
+            a=1
+        else:
+            a=-1
+        r = 1
+        if (self.polynom.value(c) * a > 0):
+            r += 1
+            a *= -1
+        q = self.polynom.derivative()
+        if (q.value(c)*a < 0):
+            r += 1
+            a*= -1
+        return (r)
+    def find_roots(self):
+        k=self.boarders()
+        print(k)
+        q=self.locate_roots(k,-k)
+        w=[]
+        for i in range(int(len(q)/2)):
+           w.append(self.find_root(q[2*i],q[2*i+1]))
+        return(w)
+def max(a):
+    k=abs(a[0])
+    for i in range(len(a)-1):
+        if(abs(a[i+1])>k):
+            k=a[i+1]
+    return(k)
+n=list(map(float,input().split()))
+k=polynom(n)
+q=solvr(k)
+w=q.find_roots()
+try:
+    w.printf()
+except AttributeError:
+    if (type(w) == float or type(w) == int):
+        print(w)
+    else:
+        try:
+            for i in range(len(w)):
+                print(w[i])
+        except TypeError:
+           print("no")
